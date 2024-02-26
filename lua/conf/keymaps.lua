@@ -33,12 +33,13 @@ kmp('n', '<leader>c', [[:w! | lua vim.cmd('!compiler "%:p"')<CR>]], opts)
 
 vim.keymap.set('n', '<leader>l', ':nohlsearch<CR>')
 vim.keymap.set('n', '<leader>t', ':tabnew<CR>')
+vim.keymap.set('n', '<leader>r', ':tabclose<CR>')
 --vim.keymap.set('n', '<leader>j', ':tabnext<CR>')
 --vim.keymap.set('n', '<leader>k', ':tabprevious<CR>')
 vim.keymap.set('n', '<leader>b', ':NvimTreeToggle<CR>')
 vim.keymap.set('n', '<leader>u', ':UndotreeToggle<CR>')
 
-
+--Function for file search(Includes hidden as well)
 local builtin = require('telescope.builtin')
 local find_files = function()
   builtin.find_files {
@@ -47,10 +48,16 @@ local find_files = function()
   }
 end
 
+--telescope search for media files
+local media_tele = function ()
+ require('telescope').extensions.media_files.media_files()
+end
+
 vim.keymap.set('n', '<leader>ff', find_files, {})
 vim.keymap.set('n', '<leader>fg', builtin.live_grep, {})
 vim.keymap.set('n', '<leader>fb', builtin.buffers, {})
 vim.keymap.set('n', '<leader>fh', builtin.help_tags, {})
+vim.keymap.set('n', '<leader>fm', media_tele, {})
 
 -- Visual Mode
 kmp('v', '<', '<gv', opts)
@@ -63,3 +70,7 @@ kmp("v", "p", '"_dP', opts)
 --Visual Block
 kmp("x", "J", ":m '>+1<CR>gv=gv", opts)
 kmp("x", "K", ":m '<-2<CR>gv=gv", opts)
+
+--Live Server
+vim.keymap.set('n', '<C-A-l>', ':LiveServerStart<CR>')
+vim.keymap.set('n', '<C-A-o>', ':LiveServerStop<CR>')

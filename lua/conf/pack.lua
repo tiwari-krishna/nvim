@@ -44,6 +44,8 @@ lazy.setup({
   -- Fuzzy finder
   {'nvim-telescope/telescope.nvim', branch = '0.1.x'},
   {'nvim-telescope/telescope-fzf-native.nvim', build = 'make'},
+  {'nvim-lua/popup.nvim'},
+  {'nvim-telescope/telescope-media-files.nvim'},
 
   -- Git
   {'lewis6991/gitsigns.nvim'},
@@ -76,12 +78,20 @@ lazy.setup({
 
   -- For {} & ()
   {'windwp/nvim-autopairs'},
+  {"norcalli/nvim-colorizer.lua"},
 
-  --Asthetics
-  {'goolord/alpha-nvim'},
+  --Live Server
+  {
+        'barrett-ruth/live-server.nvim',
+        cmd = { 'LiveServerStart', 'LiveServerStop' },
+        config = true
+   },
+
+   -- Auto Session
+   {"pysan3/autosession.nvim",
+      dependencies = { "mhinz/vim-startify" }, },
 
   -- Utilities
-  {'moll/vim-bbye'},
   {'nvim-lua/plenary.nvim'},
 	{'akinsho/toggleterm.nvim'},
 	{'folke/which-key.nvim', config = function()
@@ -89,5 +99,3 @@ lazy.setup({
 		vim.o.timeoutlen = 300
 	end	},
 })
-
-
