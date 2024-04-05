@@ -46,6 +46,7 @@ lazy.setup({
   {'nvim-telescope/telescope-fzf-native.nvim', build = 'make'},
   {'nvim-lua/popup.nvim'},
   {'nvim-telescope/telescope-media-files.nvim'},
+  {'brookhong/telescope-pathogen.nvim'},
 
   -- Git
   {'lewis6991/gitsigns.nvim'},
@@ -88,8 +89,7 @@ lazy.setup({
    },
 
    -- Auto Session
-   {"pysan3/autosession.nvim",
-      dependencies = { "mhinz/vim-startify" }, },
+   {"pysan3/autosession.nvim"},
 
   -- Utilities
   {'nvim-lua/plenary.nvim'},

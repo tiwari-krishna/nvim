@@ -107,6 +107,12 @@ require'telescope'.setup {
       filetypes = {"png", "webp", "jpg", "jpeg"},
       -- find command (defaults to `fd`)
       find_cmd = "rg"
-    }
+    },
+    ["pathogen"] = {
+                    -- remove below if you want to enable it
+                    use_last_search_for_live_grep = false,
+                    prompt_prefix_length = 100
+                }
   },
+  require("telescope").load_extension("pathogen")
 }

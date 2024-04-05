@@ -5,10 +5,17 @@ local opts = { noremap = true, silent = true}
 
 local kmp = vim.api.nvim_set_keymap
 
+--Insert Mode
+
+kmp("i", "<C-b>", "<ESC>^i", opts)
+kmp("i", "<C-e>", "<End>", opts)
+
 -- Normal Mode
 kmp("n", "<C-h>", "<C-w>h", opts)
 kmp("n", "<C-j>", "<C-w>j", opts)
 kmp("n", "<C-k>", "<C-w>k", opts)
+kmp("n", "<C-l>", "<C-w>l", opts)
+
 kmp("n", "<C-l>", "<C-w>l", opts)
 
 kmp("n", "<C-Up>", ":resize +2<CR>", opts)
@@ -24,9 +31,11 @@ kmp("n", "<leader>qQ", ":bwipeout<CR>", opts)
 
 kmp("n", "<C-s>", ":split<CR>", opts)
 kmp("n", "<C-d>", ":vsplit<CR>", opts)
+kmp("n", "<C-b>", ":close<CR>", opts)
 
 kmp("n", "<C-z><S-z>", ":q!<CR>", opts)
 kmp("n", "<C-z>z", ":wq!<CR>", opts)
+kmp("n", "<leader>s", ":w!<CR>", opts)
 
 -- Compile C files and convert latex and markdown to pdfs
 kmp('n', '<leader>c', [[:w! | lua vim.cmd('!compiler "%:p"')<CR>]], opts)
@@ -74,3 +83,7 @@ kmp("x", "K", ":m '<-2<CR>gv=gv", opts)
 --Live Server
 vim.keymap.set('n', '<C-A-l>', ':LiveServerStart<CR>')
 vim.keymap.set('n', '<C-A-o>', ':LiveServerStop<CR>')
+
+vim.keymap.set('v', '<leader>g', require("telescope").extensions["pathogen"].grep_string)
+
+vim.keymap.set('n', '<leader>fd', ':Telescope pathogen<CR>')
