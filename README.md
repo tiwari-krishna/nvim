@@ -1,8 +1,8 @@
-# NeoVim (IDE)
-My personal neovim configuration
+# NeoVim
+
+My personal neovim configuration.
 
 ## Overview
 
-Has a lots of plugins installed using lazy for lsp, git and many more.
-
-Feel free to use it as a reference for your neovim configuration.
+Just another NeoVim config with LSP, formatters, and few other QoL improvements.
+For further docs, just look at the code.
