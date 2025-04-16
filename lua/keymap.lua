@@ -26,7 +26,7 @@ kmp("n", "<C-Down>", ":resize -2<CR>", opts)
 kmp("n", "<C-Left>", ":vertical resize +2<CR>", opts)
 kmp("n", "<C-Right>", ":vertical resize -2<CR>", opts)
 
--- kmp("n", "<leader>gd", ":cd %:p:h<CR>", opts)
+kmp("n", "<leader>gd", ":cd %:p:h<CR>", opts)
 
 -- compiler command
 kmp("n", "<leader>c", [[:w! | lua vim.cmd('!compiler "%:p"')<CR>]], opts)

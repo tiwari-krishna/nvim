@@ -41,6 +41,11 @@ return {
 					Lua = {
 						diagnostics = { globals = { "vim" } },
 					},
+					workspace = {
+						checkThirdParty = false,
+						library = vim.api.nvim_get_runtime_file("", true),
+					},
+					telemetry = { enable = false },
 				},
 			})
 
@@ -48,6 +53,31 @@ return {
 			lspconfig.ts_ls.setup({ on_attach = on_attach, capabilities = capabilities })
 			lspconfig.rust_analyzer.setup({ on_attach = on_attach, capabilities = capabilities })
 			lspconfig.pyright.setup({ on_attach = on_attach, capabilities = capabilities })
+
+			vim.diagnostic.config({
+				virtual_text = {
+					prefix = "●", -- You can change to "■", "▶", ">>", "", etc.
+					spacing = 4,
+				},
+				-- signs = true,
+				signs = {
+					text = {
+						[vim.diagnostic.severity.ERROR] = "",
+						[vim.diagnostic.severity.WARN] = "",
+						[vim.diagnostic.severity.INFO] = "",
+						[vim.diagnostic.severity.HINT] = "",
+					},
+				},
+				float = {
+					border = "rounded",
+					format = function(d)
+						return ("%s (%s) [%s]"):format(d.message, d.source, d.code or d.user_data.lsp.code)
+					end,
+				},
+				underline = true,
+				update_in_insert = false,
+				severity_sort = true,
+			})
 		end,
 	},
 
@@ -71,6 +101,7 @@ return {
 		dependencies = {
 			"hrsh7th/cmp-buffer", -- Buffer completions
 			"hrsh7th/cmp-path", -- Path completions
+			"hrsh7th/cmp-nvim-lsp", -- LSP source for nvim-cmp
 			"saadparwaiz1/cmp_luasnip", -- Snippet completions
 		},
 		config = function()
@@ -108,11 +139,26 @@ return {
 					end, { "i", "s" }),
 				}),
 				sources = cmp.config.sources({
-					{ name = "nvim-lsp" },
 					{ name = "luasnip" },
+					{ name = "nvim_lsp" },
 					{ name = "buffer" },
 					{ name = "path" },
 				}),
+				formatting = {
+					format = function(entry, vim_item)
+						-- Source icons or text
+						local icons = {
+							luasnip = "[Snip]",
+							nvim_lsp = "[LSP]",
+							buffer = "[Buffer]",
+							path = "[Path]",
+						}
+						vim_item.kind = string.format("%s %s", icons[entry.source.name] or "", vim_item.kind)
+						-- Or if you prefer text instead of icons:
+						-- vim_item.menu = string.format("[%s]", entry.source.name:upper())
+						return vim_item
+					end,
+				},
 			})
 		end,
 	},

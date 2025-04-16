@@ -11,13 +11,13 @@ opt.smarttab = true
 opt.smartindent = true
 opt.title = true
 --opt.clipboard = 'unnamedplus'
-opt.mouse = 'a'
+opt.mouse = "a"
 opt.swapfile = false
 opt.backup = false
 opt.undofile = true
 opt.nu = true
 opt.rnu = true
-opt.enc = 'utf-8'
+opt.enc = "utf-8"
 opt.ignorecase = true
 opt.smartcase = true
 opt.breakindent = true
@@ -41,14 +41,22 @@ opt.hlsearch = false
 opt.incsearch = true
 
 opt.termguicolors = true
-opt.scrolloff = 8
+opt.scrolloff = 12
 opt.updatetime = 50
 
-opt.colorcolumn = "120"
+opt.colorcolumn = "80"
 
 opt.undodir = os.getenv("HOME") .. "/.cache/undodir"
 
 vim.cmd([[autocmd FileType * set formatoptions-=ro]])
+
+vim.api.nvim_create_autocmd("TextYankPost", {
+	desc = "Highlight when yanking (copying) text",
+	group = vim.api.nvim_create_augroup("kickstart-highlight-yank", { clear = true }),
+	callback = function()
+		vim.highlight.on_yank()
+	end,
+})
 
 --local wk = require("which-key")
 --wk.register(mappings, opts)
