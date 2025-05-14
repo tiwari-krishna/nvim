@@ -1,24 +1,24 @@
 return {
 	{
-		"williamboman/mason.nvim",
+		"mason-org/mason.nvim",
 		build = ":MasonUpdate",
 		config = true,
 	},
 	{
 		"WhoIsSethDaniel/mason-tool-installer.nvim",
-		dependencies = { "williamboman/mason.nvim" },
+		dependencies = { "mason-org/mason.nvim" },
 		opts = {
 			ensure_installed = {
 				--Formatters
 				"stylua",
 				"prettier",
-				"clang-format",
+				-- "clang-format",
 				"black",
 				-- linters
 				"luacheck",
 				"eslint_d",
 				"pylint",
-				"cpplint",
+				-- "cpplint",
 			},
 			auto_update = true,
 			run_on_start = true,
@@ -41,8 +41,8 @@ return {
 				html = { "prettier" },
 				css = { "prettier" },
 				markdown = { "prettier" },
-				c = { "clang-format" },
-				cpp = { "clang-format" },
+				-- c = { "clang-format" },
+				-- cpp = { "clang-format" },
 				python = { "black" },
 				json = { "prettier" },
 				yaml = { "prettier" },
@@ -50,7 +50,7 @@ return {
 		},
 		keys = {
 			{
-				"<leader>gf",
+				"<leader>cf",
 				function()
 					require("conform").format({ async = true, lsp_fallback = true })
 				end,
@@ -69,13 +69,27 @@ return {
 				javascript = { "eslint_d" },
 				typescript = { "eslint_d" },
 				python = { "pylint" },
-				c = { "cpplint" },
-				cpp = { "cpplint" },
+				-- c = { "cpplint" },
+				-- cpp = { "cpplint" },
 			}
 
 			lint.linters.luacheck.args = {
 				"--globals",
 				"vim",
+			}
+			lint.linters.eslint_d = {
+				cmd = "eslint_d",
+				stdin = true,
+				args = {
+					"--stdin",
+					"--stdin-filename",
+					"%filepath",
+					"--config-dir",
+					os.getenv("HOME") .. "/.config/eslintd", -- Explicit path
+				},
+				stream = "stdout",
+				ignore_exitcode = true,
+				parser = require("lint.parser").from_errorformat("%f:%l:%c: %m"),
 			}
 
 			-- Run linter on save

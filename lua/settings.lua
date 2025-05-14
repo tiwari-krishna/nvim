@@ -24,12 +24,11 @@ opt.breakindent = true
 opt.cmdheight = 1
 opt.splitright = true
 opt.splitbelow = true
-opt.undofile = true
 opt.conceallevel = 0
 opt.completeopt = { "menuone", "noselect" }
 opt.numberwidth = 4
 opt.signcolumn = "yes"
-opt.wrap = false
+opt.wrap = true
 
 opt.tabstop = 4
 opt.softtabstop = 4
@@ -57,6 +56,3 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 		vim.highlight.on_yank()
 	end,
 })
-
---local wk = require("which-key")
---wk.register(mappings, opts)
