@@ -1,6 +1,5 @@
 require("settings")
 require("keymap")
-require("statusLine")
 
 -- Bootstrap lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
