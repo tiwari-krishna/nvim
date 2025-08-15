@@ -1,6 +1,6 @@
 # NeoVim
 
-My personal neovim configuration.
+My personal **NeoVim** configuration BTW.
 
 ## Overview
 
@@ -9,4 +9,10 @@ For further docs, just look at the code.
 
 ## Things that I have
 
-- LSP : further
+- LSP : Using mason to install lsps and formatters
+- Package Manager : using the native neovim package manager (needs neovim 0.12 or later)
+- other essential things as plugins and some just as lua scripts
+
+# Make sure to star the repo
+
+If you are using it directly or using it as reference for anything.
