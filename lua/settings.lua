@@ -26,7 +26,7 @@ opt.splitright = true
 opt.splitbelow = true
 opt.conceallevel = 0
 opt.completeopt = { "menuone", "noselect" }
-opt.numberwidth = 4
+opt.numberwidth = 1
 opt.signcolumn = "yes"
 opt.wrap = true
 
@@ -40,18 +40,16 @@ opt.hlsearch = false
 opt.incsearch = true
 
 opt.termguicolors = true
-opt.scrolloff = 12
+opt.scrolloff = 8
 opt.updatetime = 50
 
-opt.colorcolumn = "80"
+opt.colorcolumn = "100"
 
 opt.undodir = os.getenv("HOME") .. "/.cache/undodir"
 
 vim.cmd([[autocmd FileType * set formatoptions-=ro]])
 
 vim.api.nvim_create_autocmd("TextYankPost", {
-	desc = "Highlight when yanking (copying) text",
-	group = vim.api.nvim_create_augroup("kickstart-highlight-yank", { clear = true }),
 	callback = function()
 		vim.highlight.on_yank()
 	end,

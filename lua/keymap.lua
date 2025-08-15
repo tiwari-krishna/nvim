@@ -3,8 +3,6 @@ vim.g.maplocalleader = " "
 local opts = { noremap = true, silent = true }
 local kmp = vim.api.nvim_set_keymap
 
--- vim.keymap.set("n", "<leader>gb", vim.cmd.Ex)
-
 -- Normal Mode
 kmp("n", "<C-h>", "<C-w>h", opts)
 kmp("n", "<C-j>", "<C-w>j", opts)
@@ -27,6 +25,7 @@ kmp("n", "<C-Left>", ":vertical resize +2<CR>", opts)
 kmp("n", "<C-Right>", ":vertical resize -2<CR>", opts)
 
 kmp("n", "<leader>cd", ":cd %:p:h<CR>", opts)
+kmp("n", "<leader>ss", ":w<CR>", opts)
 
 -- compiler command
 kmp("n", "<leader>cc", [[:w! | lua vim.cmd('!compiler "%:p"')<CR>]], opts)
@@ -58,12 +57,18 @@ vim.keymap.set("n", "<C-Y>", [["+Y]])
 
 vim.keymap.set({ "n", "v" }, "<leader>d", '"_d')
 
-kmp("n", "<leader>s", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]], opts)
+kmp("n", "<leader>sr", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]], opts)
 kmp("n", "<leader>xx", "<cmd>!chmod +x %<CR>", opts)
 
-kmp("n", "<leader>z", "<cmd>:wa<CR>", opts)
+-- kmp("n", "<leader>z", "<cmd>:wa<CR>", opts)
 kmp("n", "<leader>Z", "<cmd>:wqa<CR>", opts)
 
+-- Relace in visual mode without changing register
+vim.keymap.set("x", "<leader>p", [["_dP]])
+
+vim.keymap.set("t", "<C-]>", [[<C-\><C-n>]], { noremap = true })
+
+--Open Tmux inside of the current directory
 local function openTmuxWin()
 	local cwd = vim.fn.expand("%:p:h")
 	if cwd == "" then
@@ -75,6 +80,7 @@ local function openTmuxWin()
 	print("Opened tmux window in: " .. cwd)
 end
 
+-- Open the currnent file inside of a Browser
 local function openInBrowser()
 	local filepath = vim.fn.expand("%:p")
 	if vim.fn.filereadable(filepath) == 0 then
@@ -92,5 +98,32 @@ local function openInBrowser()
 	end
 end
 
+-- Toggle Term
+-- Store the terminal buffer globally
+local term_bufnr = nil
+
+-- The Actual Function
+function ToggleTerm()
+	for _, win in ipairs(vim.api.nvim_list_wins()) do
+		local buf = vim.api.nvim_win_get_buf(win)
+		if buf == term_bufnr then
+			vim.api.nvim_win_close(win, true)
+			return
+		end
+	end
+
+	if not (term_bufnr and vim.api.nvim_buf_is_valid(term_bufnr)) then
+		vim.cmd("belowright 10split")
+		vim.cmd("terminal")
+		term_bufnr = vim.api.nvim_get_current_buf()
+	else
+		vim.cmd("belowright 10split")
+		vim.api.nvim_win_set_buf(0, term_bufnr)
+	end
+
+	vim.cmd("startinsert")
+end
+
 vim.keymap.set("n", "<leader>ob", openInBrowser, { desc = "Open in browser" })
 vim.keymap.set("n", "<leader>to", openTmuxWin, { desc = "Open new tmux window here" })
+vim.keymap.set("n", "<leader>tt", ToggleTerm, { desc = "Toggle Term here" })

@@ -1,21 +1,28 @@
-require("settings")
 require("keymap")
+require("settings")
+require("theme").setup()
+require("statusLine")
+require("lspConfig")
+require("buffSwitch").setup_keymaps()
 
--- Bootstrap lazy.nvim
-local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
-if not (vim.uv or vim.loop).fs_stat(lazypath) then
-	local lazyrepo = "https://github.com/folke/lazy.nvim.git"
-	local out = vim.fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
-	if vim.v.shell_error ~= 0 then
-		vim.api.nvim_echo({
-			{ "Failed to clone lazy.nvim:\n", "ErrorMsg" },
-			{ out, "WarningMsg" },
-			{ "\nPress any key to exit..." },
-		}, true, {})
-		vim.fn.getchar()
-		os.exit(1)
-	end
-end
-vim.opt.rtp:prepend(lazypath)
+vim.pack.add({
+	{ src = "https://github.com/mbbill/undotree" },
+	{ src = "https://github.com/brianhuster/live-preview.nvim" },
+	{ src = "https://github.com/echasnovski/mini.surround" },
+	{ src = "https://github.com/echasnovski/mini.jump" },
+	{ src = "https://github.com/echasnovski/mini.comment" },
+	{ src = "https://github.com/echasnovski/mini.ai" },
+	{ src = "https://github.com/echasnovski/mini.pairs" },
+	{ src = "https://github.com/rafamadriz/friendly-snippets" },
+	{ src = "https://github.com/saghen/blink.cmp", version = vim.version.range("*") },
+	{ src = "https://github.com/stevearc/conform.nvim" },
+	-- { src = "https://github.com/mfussenegger/nvim-lint" },
+	{ src = "https://github.com/ibhagwan/fzf-lua" },
+	{ src = "https://github.com/stevearc/oil.nvim" },
+	{ src = "https://github.com/nvim-treesitter/nvim-treesitter" },
+	{ src = "https://github.com/nvim-treesitter/nvim-treesitter-textobjects" },
+	{ src = "https://github.com/mason-org/mason.nvim" },
+	{ src = "https://github.com/WhoIsSethDaniel/mason-tool-installer.nvim" },
+})
 
-require("lazy").setup("krishna")
+require("krishna")
