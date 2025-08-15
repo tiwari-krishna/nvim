@@ -1,85 +1,127 @@
-local api = vim.api
-
 local M = {}
 
--- Get all listed buffers
-function M.get_all_buffers()
-	local buffers = vim.tbl_filter(function(buf)
-		return api.nvim_buf_is_loaded(buf.bufnr) and buf.listed
-	end, vim.fn.getbufinfo({ buflisted = 1 }))
+M.marks, M.list, M.win, M.buf = {}, {}, nil, nil
 
-	return buffers
-end
-
--- Show floating window with buffers list (readonly)
-function M.show_floating()
-	local buffers = M.get_all_buffers()
-	M._buffers = buffers
-
-	local lines = {}
-	for i, buf in ipairs(buffers) do
-		local name = buf.name ~= "" and vim.fn.fnamemodify(buf.name, ":t") or "[No Name]"
-		table.insert(lines, string.format("%d: %s", i, name))
+local function rebuild_list()
+	M.list = {}
+	for _, info in ipairs(vim.fn.getbufinfo({ buflisted = 1 })) do
+		table.insert(M.list, info.bufnr)
 	end
-
-	local width = 40
-	local height = math.min(#lines, 15)
-
-	local buf = api.nvim_create_buf(false, true)
-	api.nvim_buf_set_lines(buf, 0, -1, false, lines)
-	api.nvim_buf_set_option(buf, "modifiable", false)
-	api.nvim_buf_set_option(buf, "buflisted", false)
-
-	local win_opts = {
-		relative = "editor",
-		width = width,
-		height = height,
-		row = math.floor((vim.o.lines - height) / 2),
-		col = math.floor((vim.o.columns - width) / 2),
-		style = "minimal",
-		border = "rounded",
-	}
-
-	local win = api.nvim_open_win(buf, true, win_opts)
-
-	M._buf = buf
-	M._win = win
-
-	-- Close floating window on pressing 'q'
-	api.nvim_buf_set_keymap(buf, "n", "q", "<Cmd>close<CR>", { nowait = true, noremap = true, silent = true })
-
-	-- Focus the floating window automatically
-	api.nvim_set_current_win(win)
 end
 
--- Jump to buffer at position 'pos'
-function M.goto_buffer(pos)
-	local buffers = M._buffers or M.get_all_buffers()
-	local target_buf = buffers[pos]
+local function filename(bufnr)
+	local name = vim.api.nvim_buf_get_name(bufnr)
+	return name == "" and "[No Name]" or vim.fn.fnamemodify(name, ":t")
+end
 
-	if not target_buf then
-		vim.notify("No buffer at position " .. pos, vim.log.levels.WARN)
+local function refresh_lines()
+	if not (M.buf and vim.api.nvim_buf_is_valid(M.buf)) then
 		return
 	end
-
-	api.nvim_set_current_buf(target_buf.bufnr)
+	local lines = {}
+	for _, b in ipairs(M.list) do
+		local mark = M.marks[b] and "[x]" or "[ ]"
+		table.insert(lines, mark .. " " .. filename(b))
+	end
+	if #lines == 0 then
+		lines = { " <no listed buffers>" }
+	end
+	vim.bo[M.buf].modifiable = true
+	vim.api.nvim_buf_set_lines(M.buf, 0, -1, false, lines)
+	vim.bo[M.buf].modifiable = false
 end
 
--- Setup keymaps:
--- <leader>m: show floating buffer list
--- <leader>1..9: jump to buffer
-function M.setup_keymaps()
-	vim.keymap.set(
-		"n",
-		"<leader>m",
-		M.show_floating,
-		{ desc = "Show buffer list popup", noremap = true, silent = true }
-	)
+local function cursor_buf()
+	if not (M.win and vim.api.nvim_win_is_valid(M.win)) then
+		return nil
+	end
+	local lnum = vim.api.nvim_win_get_cursor(M.win)[1]
+	return M.list[lnum], lnum
+end
 
+local function toggle_mark()
+	local buf = cursor_buf()
+	if not buf then
+		return
+	end
+	M.marks[buf] = not M.marks[buf] or nil
+	refresh_lines()
+end
+
+local function move_item(delta)
+	local _, lnum = cursor_buf()
+	if not lnum then
+		return
+	end
+	local new_pos = lnum + delta
+	if new_pos < 1 or new_pos > #M.list then
+		return
+	end
+	M.list[lnum], M.list[new_pos] = M.list[new_pos], M.list[lnum]
+	refresh_lines()
+	vim.api.nvim_win_set_cursor(M.win, { new_pos, 0 })
+end
+
+local function marked_in_order()
+	local out = {}
+	for _, b in ipairs(M.list) do
+		if M.marks[b] and vim.api.nvim_buf_is_valid(b) then
+			table.insert(out, b)
+		end
+	end
+	return out
+end
+
+local function jump_to_mark(idx)
+	local target = marked_in_order()[idx]
+	if target then
+		vim.api.nvim_set_current_buf(target)
+	end
+end
+
+function M.open()
+	rebuild_list()
+	M.buf = vim.api.nvim_create_buf(false, true)
+	M.win = vim.api.nvim_open_win(M.buf, true, {
+		relative = "editor",
+		style = "minimal",
+		border = "rounded",
+		width = math.max(30, math.floor(vim.o.columns * 0.4)),
+		height = math.max(8, math.floor(vim.o.lines * 0.5)),
+		row = math.floor((vim.o.lines - math.floor(vim.o.lines * 0.5)) / 2),
+		col = math.floor((vim.o.columns - math.floor(vim.o.columns * 0.4)) / 2),
+	})
+	vim.bo[M.buf].bufhidden = "wipe"
+	vim.bo[M.buf].filetype = "simple_buffer_marks"
+	refresh_lines()
+
+	local function map(lhs, rhs)
+		vim.keymap.set("n", lhs, rhs, { buffer = M.buf, nowait = true, silent = true })
+	end
+	map("q", function()
+		if M.win and vim.api.nvim_win_is_valid(M.win) then
+			vim.api.nvim_win_close(M.win, true)
+		end
+	end)
+	map("<CR>", toggle_mark)
+	map("J", function()
+		move_item(1)
+	end)
+	map("K", function()
+		move_item(-1)
+	end)
+	map("r", function()
+		rebuild_list()
+		refresh_lines()
+	end)
+end
+
+function M.setup()
+	vim.keymap.set("n", "<leader>m", M.open)
 	for i = 1, 9 do
 		vim.keymap.set("n", "<leader>" .. i, function()
-			M.goto_buffer(i)
-		end, { desc = "Go to buffer " .. i, noremap = true, silent = true })
+			jump_to_mark(i)
+		end)
 	end
 end
 
