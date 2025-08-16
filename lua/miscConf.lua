@@ -43,6 +43,7 @@ local things = {
 	"stylua",
 	"prettier",
 	"black",
+	"clang-format",
 }
 
 require("mason").setup()
@@ -84,3 +85,28 @@ vim.keymap.set("n", "<M-b>", "<CMD>FzfLua buffers<CR>", { desc = "Find Buffers" 
 vim.keymap.set("n", "<leader>fh", "<CMD>FzfLua help_tags<CR>", { desc = "Help Tags" })
 vim.keymap.set("n", "<leader>fa", "<CMD>FzfLua builtin<CR>", { desc = "Find Builtin Stuff" })
 vim.keymap.set("n", "<leader>fk", "<CMD>FzfLua keymaps<CR>", { desc = "Find keymaps" })
+
+------- Formatter (Coform) -------
+require("conform").setup({
+	format_on_save = {
+		lsp_fallback = true,
+		timeout_ms = 1000,
+	},
+	formatters_by_ft = {
+		lua = { "stylua" },
+		javascript = { "prettier" },
+		typescript = { "prettier" },
+		html = { "prettier" },
+		css = { "prettier" },
+		markdown = { "prettier" },
+		c = { "clang-format" },
+		cpp = { "clang-format" },
+		python = { "black" },
+		json = { "prettier" },
+		yaml = { "prettier" },
+	},
+})
+
+vim.keymap.set("n", "<leader>cf", function()
+	require("conform").format({ async = true, lsp_fallback = true })
+end, { desc = "Code Format" })

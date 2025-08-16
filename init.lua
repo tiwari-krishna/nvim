@@ -29,4 +29,3 @@ vim.pack.add({
 require("miscConf")
 require("treesitter")
 require("compl")
-require("formatLint")
