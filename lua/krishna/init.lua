@@ -1,6 +1,0 @@
-require("krishna.miscConf")
-require("krishna.fzf")
-require("krishna.treesitter")
-require("krishna.compl")
-require("krishna.mason")
-require("krishna.formatLint")

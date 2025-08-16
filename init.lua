@@ -3,7 +3,7 @@ require("settings")
 require("theme").setup()
 require("statusLine")
 require("lspConfig")
-require("buffSwitch").setup_keymaps()
+require("buffSwitch").setup()
 
 vim.pack.add({
 	{ src = "https://github.com/mbbill/undotree" },
@@ -25,4 +25,8 @@ vim.pack.add({
 	{ src = "https://github.com/WhoIsSethDaniel/mason-tool-installer.nvim" },
 })
 
-require("krishna")
+-- Plugin Related Configs
+require("miscConf")
+require("treesitter")
+require("compl")
+require("formatLint")
