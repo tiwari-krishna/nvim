@@ -1,7 +1,6 @@
 # NeoVim
 
 My personal **NeoVim** configuration BTW.
-
 Just clone it and enjoy the neovim Journey.
 
 ## Overview
