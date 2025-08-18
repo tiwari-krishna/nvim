@@ -2,6 +2,8 @@
 
 My personal **NeoVim** configuration BTW.
 
+Just clone it and enjoy the neovim Journey.
+
 ## Overview
 
 Just another NeoVim config with LSP, formatters, and few other QoL improvements.
